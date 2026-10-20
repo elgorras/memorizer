@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1020">
+  <title>Memorizer · PlayUS</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b1020;--panel:#151d32;--panel2:#1c2842;--line:#2f3e5a;--txt:#f5f7ff;--muted:#a0b0d0;--accent:#8c86ff;--green:#4ee5a1}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -20%,#25325b 0%,#0b1020 62%);color:var(--txt);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+    main{max-width:900px;margin:auto;padding:34px 22px 46px}header{display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}.eyebrow{font-size:12px;letter-spacing:.18em;color:#c0baff;font-weight:800}h1{margin:5px 0 3px;font-size:clamp(32px,6vw,48px);letter-spacing:-.05em}.sub{margin:0;color:var(--muted);font-size:15px;line-height:1.65} .pill{border:1px solid var(--line);border-radius:100px;padding:10px 15px;background:#18223a;font-size:13px;font-weight:750;display:flex;gap:9px;align-items:center;white-space:nowrap}.dot{width:9px;height:9px;border-radius:50%;background:#7e8ba6}.pill.on .dot{background:var(--green);box-shadow:0 0 0 5px #4ee5a122}.pill.saying .dot{background:#fbbf68;box-shadow:0 0 0 5px #fbbf6822}
+    .stage{border:1px solid var(--line);background:#131b30;border-radius:26px;margin-top:28px;padding:26px;min-height:290px;box-shadow:0 22px 60px #0002}.top{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}.hint{color:var(--muted);font-size:13px;letter-spacing:.04em;font-weight:750}.count{color:#c0baff;font-weight:800;font-size:13px}.arrows{display:flex;align-content:flex-start;flex-wrap:wrap;gap:11px;margin:20px 0 10px;min-height:160px}.arrow{display:grid;place-items:center;position:relative;width:76px;height:84px;background:#243453;border:1px solid #3b4d70;border-radius:17px;font-size:54px;line-height:1;color:#fff;box-shadow:inset 0 -3px #16223c}.arrow.preview{opacity:.48;border-style:dashed}.arrow small{position:absolute;font-size:10px;color:#c7d2e8;bottom:5px;right:8px}.empty{display:flex;align-items:center;gap:12px;color:#8e9dbb;font-size:16px;padding:36px 8px}.empty .big{font-size:42px;color:#687797}.wordstream{font-size:14px;color:#bfcaff;min-height:24px;line-height:1.5;overflow-wrap:anywhere}.wordstream strong{color:white}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:17px}button{border:1px solid #3b4a6c;border-radius:13px;padding:13px 17px;background:#1f2b46;color:#e8edff;font:750 14px inherit;font-family:inherit;font-size:14px;font-weight:750;cursor:pointer;transition:background .15s,transform .15s}button:hover{background:#2a3b60}button:active{transform:scale(.98)}button:focus-visible,input:focus-visible{outline:3px solid #aaa4ff;outline-offset:3px}button.primary{background:#7770f4;color:white;border-color:#7770f4;font-size:15px;padding:15px 23px}button.primary:hover{background:#8b85ff}.statusline{margin-top:19px;color:#c3cee6;font-size:14px;min-height:22px}.settings{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:26px 0 0;align-items:center}.speed{display:flex;align-items:center;gap:11px;color:#c5d0e8;font-size:13px}.speed input{accent-color:#948eff;width:130px}.speed output{width:35px;color:white;font-weight:800}.tips{margin-top:22px;background:#121a2d;border:1px solid #26354f;border-radius:20px;padding:20px 22px;color:var(--muted);font-size:14px;line-height:1.75}.tips strong{color:#e9eaff}kbd{background:#2a3550;padding:3px 7px;border:1px solid #4a5772;border-radius:6px;color:white;font-size:12px}details{margin-top:18px;color:var(--muted)}summary{cursor:pointer;font-weight:700;color:#cbd6f2}.history{display:grid;gap:9px;margin-top:13px}.history-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px;background:var(--panel);border-radius:12px;flex-wrap:wrap}.history-item span{font-size:21px;letter-spacing:5px;overflow-wrap:anywhere}.history-item button{padding:7px 10px;font-size:12px}footer{color:#7686a7;font-size:12px;line-height:1.6;margin-top:25px} @media(max-width:500px){main{padding:23px 14px}.stage{padding:19px 15px;min-height:230px;border-radius:18px}.arrow{height:65px;width:58px;font-size:42px}.arrows{min-height:120px;gap:7px}.controls button{flex:1 1 135px}}
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div><div class="eyebrow">PLAYUS · ASISTENTE DE MEMORIA</div><h1>Memorizer <span aria-hidden="true">↗</span></h1><p class="sub">Di las direcciones. Di <strong>«YA»</strong>. Escucha la secuencia automáticamente.</p></div>
+    <div class="pill" id="indicator" role="status" aria-live="polite"><span class="dot"></span><span id="indicatorText">Micrófono apagado</span></div>
+  </header>
+  <section class="stage" aria-label="Secuencia de direcciones">
+    <div class="top"><span class="hint" id="roundLabel">RONDA ACTUAL</span><span class="count" id="count">0 movimientos</span></div>
+    <div class="arrows" id="arrows" aria-live="off"><div class="empty"><span class="big">↗</span> Tus direcciones aparecerán aquí.</div></div>
+    <div class="wordstream" id="transcript" aria-live="polite"></div>
+  </section>
+  <div class="controls">
+    <button class="primary" id="listen" type="button">🎤 Empezar a escuchar</button>
+    <button id="speak" type="button">🔊 Dictar ahora</button>
+    <button id="undo" type="button">↶ Deshacer</button>
+    <button id="reset" type="button">✕ Borrar ronda</button>
+  </div>
+  <div class="statusline" id="message" role="status" aria-live="polite">Activa el micrófono una vez y juega sin tocar nada más.</div>
+  <div class="settings"><label class="speed" for="speed">Velocidad de dictado <input id="speed" type="range" min="0.8" max="2" step="0.1" value="1.35"><output id="speedVal">1.35×</output></label><span class="sub" style="font-size:12px">Se guarda automáticamente en este navegador</span></div>
+  <div class="tips"><strong>Cómo se juega:</strong> «izquierda, izquierda, derecha» → se dibuja al escucharlo → <strong>«YA»</strong> → lo dicta al instante. Cuando empieces a decir otra secuencia, <strong>la anterior se borra sola</strong>. Mientras el programa habla, pausa el micrófono para no escucharse a sí mismo.<br>También puedes decir <strong>«borrar»</strong> para empezar de cero. Atajos: <kbd>Enter</kbd> para dictar y teclas de flecha para añadir movimientos.</div>
+  <details><summary>Historial de rondas guardadas (<span id="historyCount">0</span>)</summary><div id="history" class="history"></div></details>
+  <footer>Para reconocimiento de voz, usa preferiblemente Chrome o Edge y permite el micrófono. En GitHub Pages funciona mediante HTTPS. El reconocimiento puede depender de internet y la velocidad exacta del servicio de voz del navegador.</footer>
+</main>
+<script>
+(()=>{'use strict';
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  const $=id=>document.getElementById(id);
+  const icons={izquierda:'←',derecha:'→',arriba:'↑',abajo:'↓'};
+  const arrowNames=Object.keys(icons);
+  const stored=(key,fallback)=>{try{const v=JSON.parse(localStorage.getItem(key));return v===null?fallback:v}catch{return fallback}};
+  let seq=stored('playus-memorizer-current',[]);
+  let history=stored('playus-memorizer-history',[]);
+  if(!Array.isArray(seq))seq=[];seq=seq.filter(x=>arrowNames.includes(x));
+  if(!Array.isArray(history))history=[];
+  let recognition=null,recognitionRunning=false,wantsMic=false,speaking=false,restartTimer=null,preview=[],pendingNewRound=false,roundStored=false,finalized=new Set(),lastText='',speakingToken=0;
+  const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  // Word boundaries prevent "ya" inside words like "playa".
+  const tokenize=text=>norm(text).match(/\b(izquierda|derecha|arriba|abajo|borrar|reiniciar|ya)\b/g)||[];
+  const persist=()=>{try{localStorage.setItem('playus-memorizer-current',JSON.stringify(seq));localStorage.setItem('playus-memorizer-history',JSON.stringify(history))}catch{}};
+  const announce=(text)=>{$('message').textContent=text};
+  function badge(text,type=''){$('indicatorText').textContent=text;$('indicator').className='pill '+type}
+  function render(){const all=[...seq,...preview];$('arrows').replaceChildren();if(!all.length){const e=document.createElement('div');e.className='empty';e.innerHTML='<span class="big">↗</span> Tus direcciones aparecerán aquí.';$('arrows').appendChild(e)}else{all.forEach((d,i)=>{const e=document.createElement('div');e.className='arrow'+(i>=seq.length?' preview':'');e.title=d;e.textContent=icons[d];$('arrows').appendChild(e)})}$('count').textContent=all.length+' movimiento'+(all.length===1?'':'s');persist()}
+  function renderHistory(){$('historyCount').textContent=history.length;const parent=$('history');parent.replaceChildren();if(!history.length){parent.textContent='Todavía no hay rondas.';return}history.slice(0,20).forEach((item,i)=>{if(!item||!Array.isArray(item.sequence))return;const el=document.createElement('div');el.className='history-item';const label=document.createElement('span');label.textContent=item.sequence.map(d=>icons[d]||'').join(' ');const btn=document.createElement('button');btn.textContent='Ver ronda';btn.addEventListener('click',()=>{seq=[...item.sequence];preview=[];pendingNewRound=false;roundStored=true;render();announce('Ronda recuperada. Puedes pulsar Dictar ahora.')});el.append(label,btn);parent.appendChild(el)})}
+  function archive(){if(!seq.length||roundStored)return;history.unshift({sequence:[...seq],date:new Date().toISOString()});history=history.slice(0,30);roundStored=true;persist();renderHistory()}
+  function beginNewRoundIfNeeded(){if(!pendingNewRound)return;seq=[];preview=[];pendingNewRound=false;roundStored=false;lastText='';$('roundLabel').textContent='NUEVA RONDA';announce('Nueva ronda: secuencia anterior borrada automáticamente')}
+  function reset(){cancelSpeech();seq=[];preview=[];pendingNewRound=false;roundStored=false;lastText='';render();announce('Ronda borrada. Puedes dictar la siguiente.')}
+  function acceptDirection(d){beginNewRoundIfNeeded();seq.push(d);roundStored=false;render();}
+  function applyTokens(tokens){for(const t of tokens){if(t==='ya'){preview=[];render();startDictation();return true}if(t==='borrar'||t==='reiniciar'){beginNewRoundIfNeeded();seq=[];preview=[];roundStored=false;render();announce('Ronda borrada por voz');continue}if(icons[t])acceptDirection(t)}return false}
+  function updateInterim(tokens){const y=tokens.indexOf('ya');if(y>=0){const before=tokens.slice(0,y);if(before.length){applyTokens(before.filter(x=>x!=='ya'))}preview=[];render();startDictation();return}const dirs=tokens.filter(t=>!!icons[t]);if(dirs.length)beginNewRoundIfNeeded();preview=dirs;render();if(tokens.length)announce('Escuchando: '+tokens.join(' · '))}
+  function onResult(e){if(speaking||!wantsMic)return;let interim=[];for(let i=0;i<e.results.length;i++){const r=e.results[i];const words=tokenize(r[0]?.transcript||'');if(r.isFinal){if(!finalized.has(i)){finalized.add(i);if(applyTokens(words))return}}else{interim.push(...words)}}updateInterim(interim);if(!interim.length&&seq.length)announce('Registrado: '+seq.join(' · '))}
+  function startRecognizer(){if(!wantsMic||speaking||recognitionRunning||!recognition)return;finalized.clear();try{recognition.start()}catch(err){if(err.name!=='InvalidStateError')announce('No se pudo activar el micrófono: '+err.message)}}
+  function scheduleRestart(){clearTimeout(restartTimer);if(!wantsMic||speaking)return;restartTimer=setTimeout(startRecognizer,180)}
+  function setupRecognizer(){recognition=new SR();recognition.lang='es-ES';recognition.continuous=true;recognition.interimResults=true;recognition.maxAlternatives=1;recognition.onstart=()=>{recognitionRunning=true;if(!speaking){badge('Escuchando','on');announce(pendingNewRound?'Di la siguiente ronda: la anterior se borrará sola.':'Micrófono activo. Di izquierda, derecha, arriba, abajo…')}};recognition.onresult=onResult;recognition.onend=()=>{recognitionRunning=false;preview=[];render();scheduleRestart()};recognition.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){wantsMic=false;badge('Permiso denegado');$('listen').textContent='🎤 Empezar a escuchar';announce('Permite el micrófono en la barra de direcciones y vuelve a intentarlo.')}else if(e.error==='audio-capture'){wantsMic=false;badge('Micrófono no disponible');$('listen').textContent='🎤 Empezar a escuchar';announce('No se detecta un micrófono disponible.')}else if(e.error==='network'){announce('Error de red en el reconocimiento de voz. Se reintentará automáticamente.')}else if(e.error!=='no-speech'&&e.error!=='aborted'){announce('Reconocimiento: '+e.error)}}}
+  function stopMicTemporarily(){clearTimeout(restartTimer);if(recognition){try{recognition.abort()}catch{}}recognitionRunning=false}
+  function cancelSpeech(){speakingToken++;if(window.speechSynthesis)window.speechSynthesis.cancel();speaking=false}
+  function getVoice(){const list=window.speechSynthesis?.getVoices()||[];return list.find(v=>v.lang.toLowerCase()==='es-es'&&/natural|google|microsoft/i.test(v.name))||list.find(v=>v.lang.toLowerCase()==='es-es')||list.find(v=>v.lang.toLowerCase().startsWith('es'))||null}
+  function startDictation(){if(speaking)return;if(!seq.length&&!preview.length){announce('Aún no hay direcciones.');return}if(preview.length){seq.push(...preview);preview=[]}archive();render();speaking=true;const token=++speakingToken;stopMicTemporarily();badge('Dictando secuencia','saying');announce('🔊 '+seq.join(' · '));
+    if(!('speechSynthesis' in window)){finishDictation(token);announce('Este navegador no admite síntesis de voz.');return}
+    const synth=window.speechSynthesis;synth.cancel();const u=new SpeechSynthesisUtterance(seq.join(', '));u.lang='es-ES';u.rate=Number($('speed').value);u.pitch=1;u.volume=1;const voice=getVoice();if(voice)u.voice=voice;
+    let finished=false;const finish=()=>{if(finished)return;finished=true;finishDictation(token)};u.onend=finish;u.onerror=()=>{finish();announce('No se pudo reproducir el audio. Usa Dictar ahora para reintentarlo.')};
+    try{synth.speak(u)}catch{finish();announce('Tu navegador ha bloqueado el audio. Pulsa Dictar ahora para habilitarlo.')}
+  }
+  function finishDictation(token){if(token!==speakingToken)return;speaking=false;pendingNewRound=true;badge(wantsMic?'Reactivando micrófono':'Micrófono apagado',wantsMic?'on':'');announce('✓ Dictado terminado. Di nuevas direcciones: se borrará la ronda anterior automáticamente.');scheduleRestart()}
+  $('listen').addEventListener('click',()=>{if(wantsMic){wantsMic=false;clearTimeout(restartTimer);stopMicTemporarily();badge('Micrófono apagado');$('listen').textContent='🎤 Empezar a escuchar';announce('Escucha pausada. Puedes seguir usando los botones.');return}if(!SR){announce('Este navegador no admite reconocimiento de voz. Usa Chrome o Edge actualizado.');return}if(!recognition)setupRecognizer();wantsMic=true;$('listen').textContent='⏸ Pausar micrófono';badge('Activando micrófono…');if(speaking){cancelSpeech();pendingNewRound=true}startRecognizer()});
+  $('speak').addEventListener('click',()=>{if(speaking){cancelSpeech();finishDictation(speakingToken);return}startDictation()});
+  $('undo').addEventListener('click',()=>{if(speaking)cancelSpeech();preview=[];if(pendingNewRound)pendingNewRound=false;seq.pop();roundStored=false;render();announce('Última dirección eliminada.')});
+  $('reset').addEventListener('click',reset);
+  $('speed').addEventListener('input',()=>{$('speedVal').value=Number($('speed').value).toFixed(2)+'×';try{localStorage.setItem('playus-memorizer-speed',$('speed').value)}catch{}});
+  const savedSpeed=Number(localStorage.getItem('playus-memorizer-speed'));if(savedSpeed>=0.8&&savedSpeed<=2)$('speed').value=savedSpeed;$('speedVal').value=Number($('speed').value).toFixed(2)+'×';
+  document.addEventListener('keydown',e=>{if(e.target instanceof HTMLElement&&['INPUT','BUTTON','TEXTAREA'].includes(e.target.tagName))return;if(e.key==='Enter'){e.preventDefault();startDictation()}const mapping={ArrowLeft:'izquierda',ArrowRight:'derecha',ArrowUp:'arriba',ArrowDown:'abajo'};if(mapping[e.key]){e.preventDefault();acceptDirection(mapping[e.key])}});
+  render();renderHistory();
+})();
+</script>
+</body>
+</html>
